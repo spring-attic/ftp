@@ -1,0 +1,42 @@
+//tag::ref-doc[]
+= FTP Sink
+
+FTP sink is a simple option to push files to an FTP server from incoming messages.
+
+It uses an `ftp-outbound-adapter`, therefore incoming messages can be either a `java.io.File` object, a `String` (content of the file)
+or an array of `bytes` (file content as well).
+
+To use this sink, you need a username and a password to login.
+
+NOTE: By default Spring Integration will use `o.s.i.file.DefaultFileNameGenerator` if none is specified. `DefaultFileNameGenerator` will determine the file name
+based on the value of the `file_name` header (if it exists) in the `MessageHeaders`, or if the payload of the `Message` is already a `java.io.File`, then it will
+use the original name of that file.
+
+== Options
+
+The **$$ftp$$** $$sink$$ has the following options:
+
+//tag::configuration-properties[]
+$$ftp.auto-create-dir$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
+$$ftp.factory.cache-sessions$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
+$$ftp.factory.client-mode$$:: $$The client mode to use for the FTP session.$$ *($$ClientMode$$, default: `$$<none>$$`, possible values: `ACTIVE`,`PASSIVE`)*
+$$ftp.factory.host$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.factory.password$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.factory.port$$:: $$The port of the server.$$ *($$Integer$$, default: `$$21$$`)*
+$$ftp.factory.username$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.filename-expression$$:: $$<documentation missing>$$ *($$Expression$$, default: `$$<none>$$`)*
+$$ftp.mode$$:: $$<documentation missing>$$ *($$FileExistsMode$$, default: `$$<none>$$`, possible values: `APPEND`,`FAIL`,`IGNORE`,`REPLACE`)*
+$$ftp.remote-dir$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.remote-file-separator$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.temporary-remote-dir$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.tmp-file-suffix$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.use-temporary-filename$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
+//end::configuration-properties[]
+
+//end::ref-doc[]
+
+== Build
+
+```
+$ mvn clean package
+```

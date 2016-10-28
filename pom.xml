@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>spring-cloud-stream-ftp-build</artifactId>
+	<artifactId>ftp-app-starters-build</artifactId>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -18,27 +18,16 @@
 		<module>ftp-app-starters-test-support</module>
 	</modules>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.cloud.stream.app.plugin</groupId>
-				<artifactId>spring-cloud-stream-app-maven-plugin</artifactId>
-				<configuration>
-					<generatedProjectHome>${session.executionRootDirectory}/apps</generatedProjectHome>
-					<generatedProjectVersion>${project.version}</generatedProjectVersion>
-					<bom>
-						<name>scs-bom</name>
-						<groupId>org.springframework.cloud.stream.app</groupId>
-						<artifactId>ftp-app-dependencies</artifactId>
-						<version>${project.version}</version>
-					</bom>
-					<generatedApps>
-						<ftp-source/>
-						<ftp-sink/>
-					</generatedApps>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud.stream.app</groupId>
+				<artifactId>ftp-app-dependencies</artifactId>
+				<version>1.1.0.BUILD-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 </project>

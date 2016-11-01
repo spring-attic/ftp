@@ -24,13 +24,10 @@ import org.springframework.cloud.stream.app.ftp.FtpSessionFactoryConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.integration.dsl.GenericEndpointSpec;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.ftp.Ftp;
 import org.springframework.integration.dsl.ftp.FtpMessageHandlerSpec;
-import org.springframework.integration.dsl.support.Consumer;
-import org.springframework.integration.file.remote.handler.FileTransferringMessageHandler;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.ftp.session.FtpRemoteFileTemplate;
 
@@ -57,13 +54,7 @@ public class FtpSinkConfiguration {
 			handlerSpec.fileNameExpression(properties.getFilenameExpression().getExpressionString());
 		}
 		return IntegrationFlows.from(Sink.INPUT)
-			.handle(handlerSpec,
-				new Consumer<GenericEndpointSpec<FileTransferringMessageHandler<FTPFile>>>() {
-					@Override
-					public void accept(GenericEndpointSpec<FileTransferringMessageHandler<FTPFile>> e) {
-						e.autoStartup(false);
-					}
-				})
+			.handle(handlerSpec)
 			.get();
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +44,8 @@ import org.springframework.cloud.stream.app.test.file.remote.RemoteFileTestSuppo
  */
 public class FtpTestSupport extends RemoteFileTestSupport {
 
+	private static final FtpServerFactory serverFactory = new FtpServerFactory();
+
 	private static volatile FtpServer server;
 
 	public String getTargetLocalDirectoryName() {
@@ -52,21 +54,25 @@ public class FtpTestSupport extends RemoteFileTestSupport {
 
 	@BeforeClass
 	public static void createServer() throws Exception {
-		FtpServerFactory serverFactory = new FtpServerFactory();
 		serverFactory.setUserManager(new TestUserManager(remoteTemporaryFolder.getRoot().getAbsolutePath()));
 
 		ListenerFactory factory = new ListenerFactory();
-		factory.setPort(port);
+		factory.setPort(0);
 		serverFactory.addListener("default", factory.createListener());
 
 		server = serverFactory.createServer();
 		server.start();
+		System.setProperty("ftp.factory.port", String.valueOf(serverFactory.getListener("default").getPort()));
+		System.setProperty("ftp.localDir",
+				localTemporaryFolder.getRoot().getAbsolutePath() + File.separator + "localTarget");
 	}
 
 
 	@AfterClass
 	public static void stopServer() throws Exception {
 		server.stop();
+		System.clearProperty("ftp.factory.port");
+		System.clearProperty("ftp.localDir");
 	}
 
 	@Override

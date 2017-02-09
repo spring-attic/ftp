@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.springframework.cloud.stream.app</groupId>	
-    <artifactId>ftp-app-dependencies</artifactId>
-    <version>1.1.2.BUILD-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>ftp-app-dependencies</name>
-    <description>Spring Cloud Stream FTP App Dependencies</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.cloud.stream.app</groupId>
+	<artifactId>ftp-app-dependencies</artifactId>
+	<version>1.1.2.BUILD-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>ftp-app-dependencies</name>
+	<description>Spring Cloud Stream FTP App Dependencies</description>
 
-    <parent>
-	<artifactId>spring-cloud-dependencies-parent</artifactId>
-        <groupId>org.springframework.cloud</groupId>
-        <version>1.2.1.RELEASE</version>
-        <relativePath />
-    </parent>
+	<parent>
+		<artifactId>spring-cloud-dependencies-parent</artifactId>
+		<groupId>org.springframework.cloud</groupId>
+		<version>1.2.1.RELEASE</version>
+		<relativePath />
+	</parent>
 
-    <properties>
-        <ftpserver-core.version>1.0.6</ftpserver-core.version>
-    </properties>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud.stream.app</groupId>
-                <artifactId>spring-cloud-starter-stream-source-ftp</artifactId>
-                <version>1.1.2.BUILD-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud.stream.app</groupId>
-                <artifactId>spring-cloud-starter-stream-sink-ftp</artifactId>
-                <version>1.1.2.BUILD-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ftpserver</groupId>
-                <artifactId>ftpserver-core</artifactId>
-                <version>${ftpserver-core.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud.stream.app</groupId>
-                <artifactId>ftp-app-starters-test-support</artifactId>
-                <version>1.1.2.BUILD-SNAPSHOT</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
+	<properties>
+		<ftpserver-core.version>1.0.6</ftpserver-core.version>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud.stream.app</groupId>
+				<artifactId>spring-cloud-starter-stream-source-ftp</artifactId>
+				<version>1.1.2.BUILD-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud.stream.app</groupId>
+				<artifactId>spring-cloud-starter-stream-sink-ftp</artifactId>
+				<version>1.1.2.BUILD-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.ftpserver</groupId>
+				<artifactId>ftpserver-core</artifactId>
+				<version>${ftpserver-core.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud.stream.app</groupId>
+				<artifactId>ftp-app-starters-test-support</artifactId>
+				<version>1.1.2.BUILD-SNAPSHOT</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
 
-    </dependencyManagement>
-<profiles>
+	</dependencyManagement>
+
+	<profiles>
 		<profile>
 			<id>spring</id>
 			<repositories>

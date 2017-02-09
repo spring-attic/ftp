@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,16 +21,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Properties;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.cloud.stream.app.test.PropertiesInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.app.test.ftp.FtpTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.messaging.support.GenericMessage;
@@ -44,24 +41,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Gary Russell
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = FtpSinkIntegrationTests.FtpSinkApplication.class,
-								initializers = PropertiesInitializer.class)
 @DirtiesContext
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = {
+				"ftp.remoteDir = ftpTarget",
+				"ftp.factory.username = foo",
+				"ftp.factory.password = foo",
+				"ftp.mode = FAIL",
+				"ftp.filenameExpression = payload.name.toUpperCase()"
+		})
 public class FtpSinkIntegrationTests extends FtpTestSupport {
-
-	@BeforeClass
-	public static void configureSink() throws Throwable {
-
-		Properties properties = new Properties();
-		properties.put("ftp.remoteDir", "ftpTarget");
-		properties.put("ftp.factory.username", "foo");
-		properties.put("ftp.factory.password", "foo");
-		//properties.put("filenamePattern", "*");
-		properties.put("ftp.factory.port", port);
-		properties.put("ftp.mode", "FAIL");
-		properties.put("ftp.filenameExpression", "payload.name.toUpperCase()");
-		PropertiesInitializer.PROPERTIES = properties;
-	}
 
 	@Autowired
 	Sink ftpSink;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,19 +22,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.net.ftp.FTPFile;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.cloud.stream.app.test.PropertiesInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.app.test.ftp.FtpTestSupport;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
@@ -44,16 +41,23 @@ import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.test.util.TestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 
 /**
  * @author David Turanski
  * @author Marius Bogoevici
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = FtpSourceIntegrationTests.FtpSourceApplication.class,
-								initializers = PropertiesInitializer.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = {
+			"ftp.remoteDir = ftpSource",
+			"ftp.factory.username = foo",
+			"ftp.factory.password = foo",
+			"ftp.filenamePattern = *",
+			"file.consumer.mode = ref",
+			"ftp.factory.cacheSessions = true"
+		})
 @DirtiesContext
 public class FtpSourceIntegrationTests extends FtpTestSupport {
 
@@ -68,25 +72,6 @@ public class FtpSourceIntegrationTests extends FtpTestSupport {
 
 	@Autowired
 	private SessionFactory<FTPFile> sessionFactory;
-
-	@BeforeClass
-	public static void configureSource() throws Throwable {
-		Properties properties = buildProperties();
-		PropertiesInitializer.PROPERTIES = properties;
-	}
-
-	protected static Properties buildProperties() {
-		Properties properties = new Properties();
-		properties.put("ftp.remoteDir", "ftpSource");
-		properties.put("ftp.localDir", localTemporaryFolder.getRoot().getAbsolutePath() + File.separator + "localTarget");
-		properties.put("ftp.factory.username", "foo");
-		properties.put("ftp.factory.password", "foo");
-		properties.put("ftp.filenamePattern", "*");
-		properties.put("ftp.factory.port", port);
-		properties.put("file.consumer.mode", "ref");
-		properties.put("ftp.factory.cacheSessions", true);
-		return properties;
-	}
 
 	@Autowired
 	Source ftpSource;

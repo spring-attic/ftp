@@ -17,11 +17,13 @@ package org.springframework.cloud.stream.app.ftp.sink;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.stream.app.file.remote.AbstractRemoteFileSinkProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author Gary Russell
  */
 @ConfigurationProperties("ftp")
+@Validated
 public class FtpSinkProperties extends AbstractRemoteFileSinkProperties {
 
 }

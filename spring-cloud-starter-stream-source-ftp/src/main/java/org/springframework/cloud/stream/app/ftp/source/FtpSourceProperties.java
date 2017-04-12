@@ -17,12 +17,14 @@ package org.springframework.cloud.stream.app.ftp.source;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.stream.app.file.remote.AbstractRemoteFileSourceProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author David Turanski
  * @author Gary Russell
  */
 @ConfigurationProperties("ftp")
+@Validated
 public class FtpSourceProperties extends AbstractRemoteFileSourceProperties {
 
 }

@@ -12,6 +12,23 @@ NOTE: By default Spring Integration will use `o.s.i.file.DefaultFileNameGenerato
 based on the value of the `file_name` header (if it exists) in the `MessageHeaders`, or if the payload of the `Message` is already a `java.io.File`, then it will
 use the original name of that file.
 
+== Input
+
+=== Headers
+
+* `file_name` (See note above)
+
+=== Payload
+
+* `java.io.File`
+* `java.io.InputStream`
+* `byte[]`
+* `String`
+
+== Output
+
+N/A (writes to the FTP server).
+
 == Options
 
 The **$$ftp$$** $$sink$$ has the following options:
@@ -38,5 +55,18 @@ $$ftp.use-temporary-filename$$:: $$<documentation missing>$$ *($$Boolean$$, defa
 == Build
 
 ```
-$ mvn clean package
+$ ./mvnw clean install -PgenerateApps
+$ cd apps
+```
+You can find the corresponding binder based projects here.
+You can then cd into one one of the folders and build it:
+```
+$ ./mvnw clean package
+```
+
+=== Examples
+
+```
+java -jar ftp_sink.jar --ftp.remote-dir=bar --ftp.factory.host=ftpserver \
+         --ftp.factory.username=user --ftp.factory.password=pw
 ```

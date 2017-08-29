@@ -70,3 +70,10 @@ $ ./mvnw clean package
 java -jar ftp_sink.jar --ftp.remote-dir=bar --ftp.factory.host=ftpserver \
          --ftp.factory.username=user --ftp.factory.password=pw
 ```
+
+=== Examples
+
+```
+java -jar ftp_sink.jar --ftp.remote-dir=bar --ftp.factory.host=ftpserver \
+         --ftp.factory.username=user --ftp.factory.password=pw
+```

@@ -97,7 +97,6 @@ $$trigger.max-messages$$:: $$Maximum messages per poll, -1 means infinity.$$ *($
 $$trigger.time-unit$$:: $$The TimeUnit to apply to delay values.$$ *($$TimeUnit$$, default: `$$SECONDS$$`, possible values: `NANOSECONDS`,`MICROSECONDS`,`MILLISECONDS`,`SECONDS`,`MINUTES`,`HOURS`,`DAYS`)*
 //end::configuration-properties[]
 
-//end::ref-doc[]
 == Build
 
 ```
@@ -116,3 +115,4 @@ $ ./mvnw clean package
 java -jar ftp_source.jar --ftp.remote-dir=foo --file.mode=lines --trigger.fixed-delay=60 --ftp.factory.host=ftpserver \
          --ftp.factory.username=user --ftp.factory.password=pw --ftp.local-dir=/foo
 ```
+//end::ref-doc[]

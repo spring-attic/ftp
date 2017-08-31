@@ -50,8 +50,6 @@ $$ftp.tmp-file-suffix$$:: $$<documentation missing>$$ *($$String$$, default: `$$
 $$ftp.use-temporary-filename$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
 //end::configuration-properties[]
 
-//end::ref-doc[]
-
 == Build
 
 ```
@@ -70,3 +68,4 @@ $ ./mvnw clean package
 java -jar ftp_sink.jar --ftp.remote-dir=bar --ftp.factory.host=ftpserver \
          --ftp.factory.username=user --ftp.factory.password=pw
 ```
+//end::ref-doc[]

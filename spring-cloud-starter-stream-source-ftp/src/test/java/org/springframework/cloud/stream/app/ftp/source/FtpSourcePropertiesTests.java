@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,95 +24,112 @@ import java.io.File;
 import org.junit.Test;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.util.EnvironmentTestUtils;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * @author David Turanski
  * @author Gary Russell
+ * @author Artem Bilan
  */
 public class FtpSourcePropertiesTests {
 
 	@Test
 	public void localDirCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.localDir:local");
+		TestPropertyValues.of("ftp.localDir:local")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertThat(properties.getLocalDir(), equalTo(new File("local")));
+		context.close();
 	}
 
 	@Test
 	public void remoteDirCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.remoteDir:/remote");
+		TestPropertyValues.of("ftp.remoteDir:/remote")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertThat(properties.getRemoteDir(), equalTo("/remote"));
+		context.close();
 	}
 
 	@Test
 	public void deleteRemoteFilesCanBeEnabled() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.deleteRemoteFiles:true");
+		TestPropertyValues.of("ftp.deleteRemoteFiles:true")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertTrue(properties.isDeleteRemoteFiles());
+		context.close();
 	}
 
 	@Test
 	public void autoCreateLocalDirCanBeDisabled() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.autoCreateLocalDir:false");
+		TestPropertyValues.of("ftp.autoCreateLocalDir:false")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertTrue(!properties.isAutoCreateLocalDir());
+		context.close();
 	}
 
 	@Test
 	public void tmpFileSuffixCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.tmpFileSuffix:.foo");
+		TestPropertyValues.of("ftp.tmpFileSuffix:.foo")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertThat(properties.getTmpFileSuffix(), equalTo(".foo"));
+		context.close();
 	}
 
 	@Test
 	public void filenamePatternCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.filenamePattern:*.foo");
+		TestPropertyValues.of("ftp.filenamePattern:*.foo")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertThat(properties.getFilenamePattern(), equalTo("*.foo"));
+		context.close();
 	}
 
 	@Test
 	public void remoteFileSeparatorCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.remoteFileSeparator:\\");
+		TestPropertyValues.of("ftp.remoteFileSeparator:\\")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertThat(properties.getRemoteFileSeparator(), equalTo("\\"));
+		context.close();
 	}
 
 
 	@Test
 	public void preserveTimestampDirCanBeDisabled() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "ftp.preserveTimestamp:false");
+		TestPropertyValues.of("ftp.preserveTimestamp:false")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		FtpSourceProperties properties = context.getBean(FtpSourceProperties.class);
 		assertTrue(!properties.isPreserveTimestamp());
+		context.close();
 	}
 
 	@Configuration
@@ -120,4 +137,5 @@ public class FtpSourcePropertiesTests {
 	static class Conf {
 
 	}
+
 }

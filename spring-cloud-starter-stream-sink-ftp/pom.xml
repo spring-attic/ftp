@@ -33,7 +33,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud.stream.app</groupId>
 			<artifactId>ftp-app-starters-test-support</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

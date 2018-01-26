@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,16 +47,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * @author David Turanski
  * @author Marius Bogoevici
+ * @author Artem Bilan
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 		properties = {
-			"ftp.remoteDir = ftpSource",
-			"ftp.factory.username = foo",
-			"ftp.factory.password = foo",
-			"ftp.filenamePattern = *",
-			"file.consumer.mode = ref",
-			"ftp.factory.cacheSessions = true"
+				"ftp.remoteDir = ftpSource",
+				"ftp.factory.username = foo",
+				"ftp.factory.password = foo",
+				"ftp.filenamePattern = *",
+				"file.consumer.mode = ref",
+				"ftp.factory.cacheSessions = true"
 		})
 @DirtiesContext
 public class FtpSourceIntegrationTests extends FtpTestSupport {
@@ -74,20 +75,21 @@ public class FtpSourceIntegrationTests extends FtpTestSupport {
 	private SessionFactory<FTPFile> sessionFactory;
 
 	@Autowired
-	Source ftpSource;
+	private Source ftpSource;
 
 	@Test
 	public void sourceFilesAsRef() throws InterruptedException {
-		assertEquals("*", TestUtils.getPropertyValue(TestUtils.getPropertyValue(sourcePollingChannelAdapter,
-									"source.synchronizer.filter.fileFilters", Set.class).iterator().next(), "path"));
+		assertEquals("*",
+				TestUtils.getPropertyValue(this.sourcePollingChannelAdapter, "source.synchronizer.filter.path"));
 		for (int i = 1; i <= 2; i++) {
-			@SuppressWarnings("unchecked")
-			Message<File> received = (Message<File>) messageCollector.forChannel(ftpSource.output()).poll(10,
-					TimeUnit.SECONDS);
+			Message<?> received = messageCollector.forChannel(ftpSource.output()).poll(10, TimeUnit.SECONDS);
 			assertNotNull(received);
-			assertThat(received.getPayload(), equalTo(new File(config.getLocalDir() + "/ftpSource" + i + ".txt")));
+
+			assertThat(new File(received.getPayload().toString().replaceAll("\"", "")),
+					equalTo(new File(this.config.getLocalDir(), "ftpSource" + i + ".txt")));
 		}
 		assertThat(this.sessionFactory, instanceOf(CachingSessionFactory.class));
+		this.sourcePollingChannelAdapter.stop();
 	}
 
 	@SpringBootApplication

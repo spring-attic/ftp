@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package org.springframework.cloud.stream.app.ftp.source;
 
 import org.apache.commons.net.ftp.FTPFile;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,7 +25,6 @@ import org.springframework.cloud.stream.app.file.FileConsumerProperties;
 import org.springframework.cloud.stream.app.file.FileUtils;
 import org.springframework.cloud.stream.app.ftp.FtpSessionFactoryConfiguration;
 import org.springframework.cloud.stream.app.trigger.TriggerConfiguration;
-import org.springframework.cloud.stream.app.trigger.TriggerProperties;
 import org.springframework.cloud.stream.app.trigger.TriggerPropertiesMaxMessagesDefaultUnlimited;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
@@ -32,11 +32,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.SourcePollingChannelAdapterSpec;
-import org.springframework.integration.dsl.ftp.Ftp;
-import org.springframework.integration.dsl.ftp.FtpInboundChannelAdapterSpec;
-import org.springframework.integration.dsl.support.Consumer;
 import org.springframework.integration.file.remote.session.SessionFactory;
+import org.springframework.integration.ftp.dsl.Ftp;
+import org.springframework.integration.ftp.dsl.FtpInboundChannelAdapterSpec;
 import org.springframework.integration.ftp.filters.FtpRegexPatternFileListFilter;
 import org.springframework.integration.ftp.filters.FtpSimplePatternFileListFilter;
 import org.springframework.integration.scheduling.PollerMetadata;
@@ -46,23 +44,25 @@ import org.springframework.util.StringUtils;
  * @author David Turanski
  * @author Marius Bogoevici
  * @author Gary Russell
+ * @author Artem Bilan
  */
 @EnableBinding(Source.class)
-@EnableConfigurationProperties({FtpSourceProperties.class, FileConsumerProperties.class,
-		TriggerPropertiesMaxMessagesDefaultUnlimited.class})
-@Import({TriggerConfiguration.class, FtpSessionFactoryConfiguration.class})
+@EnableConfigurationProperties({ FtpSourceProperties.class, FileConsumerProperties.class,
+		TriggerPropertiesMaxMessagesDefaultUnlimited.class })
+@Import({ TriggerConfiguration.class, FtpSessionFactoryConfiguration.class })
 public class FtpSourceConfiguration {
 
 	@Autowired
-	@Qualifier("defaultPoller")
-	PollerMetadata defaultPoller;
+	@Qualifier(PollerMetadata.DEFAULT_POLLER)
+	private PollerMetadata defaultPoller;
 
 	@Autowired
-	Source source;
+	private Source source;
 
 	@Bean
 	public IntegrationFlow ftpInboundFlow(SessionFactory<FTPFile> ftpSessionFactory, FtpSourceProperties properties,
 			FileConsumerProperties fileConsumerProperties) {
+
 		FtpInboundChannelAdapterSpec messageSourceBuilder = Ftp.inboundAdapter(ftpSessionFactory)
 				.preserveTimestamp(properties.isPreserveTimestamp())
 				.remoteDirectory(properties.getRemoteDir())
@@ -76,20 +76,11 @@ public class FtpSourceConfiguration {
 			messageSourceBuilder.filter(new FtpSimplePatternFileListFilter(properties.getFilenamePattern()));
 		}
 		else if (properties.getFilenameRegex() != null) {
-			messageSourceBuilder
-					.filter(new FtpRegexPatternFileListFilter(properties.getFilenameRegex()));
+			messageSourceBuilder.filter(new FtpRegexPatternFileListFilter(properties.getFilenameRegex()));
 		}
 
-		IntegrationFlowBuilder flowBuilder = IntegrationFlows.from(messageSourceBuilder
-				, new Consumer<SourcePollingChannelAdapterSpec>() {
-
-			@Override
-			public void accept(SourcePollingChannelAdapterSpec sourcePollingChannelAdapterSpec) {
-				sourcePollingChannelAdapterSpec
-						.poller(FtpSourceConfiguration.this.defaultPoller);
-			}
-
-		});
+		IntegrationFlowBuilder flowBuilder =
+				IntegrationFlows.from(messageSourceBuilder, e -> e.poller(this.defaultPoller));
 
 		return FileUtils.enhanceFlowForReadingMode(flowBuilder, fileConsumerProperties)
 				.channel(this.source.output())

@@ -74,21 +74,21 @@ $$file.consumer.mode$$:: $$The FileReadingMode to use for file reading sources.
  'contents' - the contents as bytes.$$ *($$FileReadingMode$$, default: `$$<none>$$`, possible values: `ref`,`lines`,`contents`)*
 $$file.consumer.with-markers$$:: $$Set to true to emit start of file/end of file marker messages before/after the data.
  	Only valid with FileReadingMode 'lines'.$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$ftp.auto-create-local-dir$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$ftp.delete-remote-files$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
+$$ftp.auto-create-local-dir$$:: $$Set to true to create the local directory if it does not exist.$$ *($$Boolean$$, default: `$$true$$`)*
+$$ftp.delete-remote-files$$:: $$Set to true to delete remote files after successful transfer.$$ *($$Boolean$$, default: `$$false$$`)*
 $$ftp.factory.cache-sessions$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
 $$ftp.factory.client-mode$$:: $$The client mode to use for the FTP session.$$ *($$ClientMode$$, default: `$$<none>$$`, possible values: `ACTIVE`,`PASSIVE`)*
 $$ftp.factory.host$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
 $$ftp.factory.password$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
 $$ftp.factory.port$$:: $$The port of the server.$$ *($$Integer$$, default: `$$21$$`)*
 $$ftp.factory.username$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$ftp.filename-pattern$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$ftp.filename-regex$$:: $$<documentation missing>$$ *($$Pattern$$, default: `$$<none>$$`)*
-$$ftp.local-dir$$:: $$<documentation missing>$$ *($$File$$, default: `$$<none>$$`)*
-$$ftp.preserve-timestamp$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$ftp.remote-dir$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$ftp.remote-file-separator$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$ftp.tmp-file-suffix$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.filename-pattern$$:: $$A filter pattern to match the names of files to transfer.$$ *($$String$$, default: `$$<none>$$`)*
+$$ftp.filename-regex$$:: $$A filter regex pattern to match the names of files to transfer.$$ *($$Pattern$$, default: `$$<none>$$`)*
+$$ftp.local-dir$$:: $$The local directory to use for file transfers.$$ *($$File$$, default: `$$<none>$$`)*
+$$ftp.preserve-timestamp$$:: $$Set to true to preserve the original timestamp.$$ *($$Boolean$$, default: `$$true$$`)*
+$$ftp.remote-dir$$:: $$The remote FTP directory.$$ *($$String$$, default: `$$/$$`)*
+$$ftp.remote-file-separator$$:: $$The remote file separator.$$ *($$String$$, default: `$$/$$`)*
+$$ftp.tmp-file-suffix$$:: $$The suffix to use while the transfer is in progress.$$ *($$String$$, default: `$$.tmp$$`)*
 $$trigger.cron$$:: $$Cron expression value for the Cron Trigger.$$ *($$String$$, default: `$$<none>$$`)*
 $$trigger.date-format$$:: $$Format for the date value.$$ *($$String$$, default: `$$<none>$$`)*
 $$trigger.fixed-delay$$:: $$Fixed delay for periodic triggers.$$ *($$Integer$$, default: `$$1$$`)*

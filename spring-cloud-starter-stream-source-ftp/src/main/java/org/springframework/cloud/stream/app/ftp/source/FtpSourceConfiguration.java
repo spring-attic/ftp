@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.app.file.FileConsumerProperties;
+import org.springframework.cloud.stream.app.file.FileReadingMode;
 import org.springframework.cloud.stream.app.file.FileUtils;
 import org.springframework.cloud.stream.app.ftp.FtpSessionFactoryConfiguration;
 import org.springframework.cloud.stream.app.trigger.TriggerConfiguration;
@@ -45,6 +46,7 @@ import org.springframework.util.StringUtils;
  * @author Marius Bogoevici
  * @author Gary Russell
  * @author Artem Bilan
+ * @author Christian Tzolov
  */
 @EnableBinding(Source.class)
 @EnableConfigurationProperties({ FtpSourceProperties.class, FileConsumerProperties.class,
@@ -82,9 +84,11 @@ public class FtpSourceConfiguration {
 		IntegrationFlowBuilder flowBuilder =
 				IntegrationFlows.from(messageSourceBuilder, e -> e.poller(this.defaultPoller));
 
-		return FileUtils.enhanceFlowForReadingMode(flowBuilder, fileConsumerProperties)
-				.channel(this.source.output())
-				.get();
+		if (fileConsumerProperties.getMode() != FileReadingMode.ref) {
+			flowBuilder = FileUtils.enhanceFlowForReadingMode(flowBuilder, fileConsumerProperties);
+		}
+
+		return flowBuilder.channel(this.source.output()).get();
 	}
 
 }

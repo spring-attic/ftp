@@ -15,14 +15,7 @@
 
 package org.springframework.cloud.stream.app.ftp.source;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -41,13 +34,21 @@ import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.test.util.TestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 
 /**
  * @author David Turanski
  * @author Marius Bogoevici
  * @author Artem Bilan
+ * @author Christian Tzolov
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -59,38 +60,62 @@ import org.springframework.test.context.junit4.SpringRunner;
 				"file.consumer.mode = ref",
 				"ftp.factory.cacheSessions = true"
 		})
-@DirtiesContext
-public class FtpSourceIntegrationTests extends FtpTestSupport {
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+public abstract class FtpSourceIntegrationTests extends FtpTestSupport {
 
 	@Autowired
-	private SourcePollingChannelAdapter sourcePollingChannelAdapter;
+	SourcePollingChannelAdapter sourcePollingChannelAdapter;
 
 	@Autowired
-	private MessageCollector messageCollector;
+	MessageCollector messageCollector;
 
 	@Autowired
-	private FtpSourceProperties config;
+	FtpSourceProperties config;
 
 	@Autowired
-	private SessionFactory<FTPFile> sessionFactory;
+	SessionFactory<FTPFile> sessionFactory;
 
 	@Autowired
-	private Source ftpSource;
+	Source ftpSource;
 
-	@Test
-	public void sourceFilesAsRef() throws InterruptedException {
-		assertEquals("*",
-				TestUtils.getPropertyValue(this.sourcePollingChannelAdapter, "source.synchronizer.filter.path"));
-		for (int i = 1; i <= 2; i++) {
-			Message<?> received = messageCollector.forChannel(ftpSource.output()).poll(10, TimeUnit.SECONDS);
-			assertNotNull(received);
+	@TestPropertySource(properties = "file.consumer.mode = ref")
+	public static class SourceFilesAsRefTest extends FtpSourceIntegrationTests {
 
-			assertThat(new File(received.getPayload().toString().replaceAll("\"", "")),
-					equalTo(new File(this.config.getLocalDir(), "ftpSource" + i + ".txt")));
+		@Test
+		public void sourceFilesAsRef() throws InterruptedException {
+			assertEquals("*",
+					TestUtils.getPropertyValue(sourcePollingChannelAdapter, "source.synchronizer.filter.path"));
+			for (int i = 1; i <= 2; i++) {
+				Message<?> received = messageCollector.forChannel(ftpSource.output()).poll(10, TimeUnit.SECONDS);
+				assertNotNull(received);
+
+				assertThat(new File(received.getPayload().toString().replaceAll("\"", "")),
+						equalTo(new File(this.config.getLocalDir(), "ftpSource" + i + ".txt")));
+			}
+			assertThat(this.sessionFactory, instanceOf(CachingSessionFactory.class));
+			this.sourcePollingChannelAdapter.stop();
 		}
-		assertThat(this.sessionFactory, instanceOf(CachingSessionFactory.class));
-		this.sourcePollingChannelAdapter.stop();
 	}
+
+	// TODO: there is an interference issue between both tests
+	//@TestPropertySource(properties = { "spring.cloud.stream.bindings.output.contentType=text/plain" })
+	//public static class SourceRefModeWithTextContentTypeTest extends FtpSourceIntegrationTests {
+	//
+	//	@Test
+	//	public void sourceFilesAsRef() throws InterruptedException {
+	//		assertEquals("*",
+	//				TestUtils.getPropertyValue(sourcePollingChannelAdapter, "source.synchronizer.filter.path"));
+	//		for (int i = 1; i <= 2; i++) {
+	//			Message<?> received = messageCollector.forChannel(ftpSource.output()).poll(10, TimeUnit.SECONDS);
+	//			assertNotNull(received);
+	//
+	//			assertThat(received.getPayload(),
+	//					equalTo(this.config.getLocalDir()  + File.separator + "ftpSource" + i + ".txt"));
+	//		}
+	//		assertThat(this.sessionFactory, instanceOf(CachingSessionFactory.class));
+	//		this.sourcePollingChannelAdapter.stop();
+	//	}
+	//}
 
 	@SpringBootApplication
 	public static class FtpSourceApplication {

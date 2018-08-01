@@ -16,6 +16,7 @@
 package org.springframework.cloud.stream.app.ftp.source;
 
 import java.io.File;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -29,8 +30,11 @@ import org.springframework.cloud.stream.app.test.ftp.FtpTestSupport;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.integration.endpoint.SourcePollingChannelAdapter;
+import org.springframework.integration.file.filters.FileListFilter;
 import org.springframework.integration.file.remote.session.CachingSessionFactory;
 import org.springframework.integration.file.remote.session.SessionFactory;
+import org.springframework.integration.hazelcast.metadata.HazelcastMetadataStore;
+import org.springframework.integration.metadata.ConcurrentMetadataStore;
 import org.springframework.integration.test.util.TestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
@@ -53,6 +57,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 		properties = {
+				"debug=true",
 				"ftp.remoteDir = ftpSource",
 				"ftp.factory.username = foo",
 				"ftp.factory.password = foo",
@@ -81,10 +86,16 @@ public abstract class FtpSourceIntegrationTests extends FtpTestSupport {
 	@TestPropertySource(properties = "file.consumer.mode = ref")
 	public static class SourceFilesAsRefTest extends FtpSourceIntegrationTests {
 
+		@Autowired
+		private ConcurrentMetadataStore metadataStore;
+
 		@Test
+		@SuppressWarnings("unchecked")
 		public void sourceFilesAsRef() throws InterruptedException {
-			assertEquals("*",
-					TestUtils.getPropertyValue(sourcePollingChannelAdapter, "source.synchronizer.filter.path"));
+			Set<FileListFilter<?>> filters =
+					TestUtils.getPropertyValue(sourcePollingChannelAdapter,
+							"source.synchronizer.filter.fileFilters", Set.class);
+			assertEquals("*", TestUtils.getPropertyValue(filters.iterator().next(), "path"));
 			for (int i = 1; i <= 2; i++) {
 				Message<?> received = messageCollector.forChannel(ftpSource.output()).poll(10, TimeUnit.SECONDS);
 				assertNotNull(received);
@@ -94,7 +105,13 @@ public abstract class FtpSourceIntegrationTests extends FtpTestSupport {
 			}
 			assertThat(this.sessionFactory, instanceOf(CachingSessionFactory.class));
 			this.sourcePollingChannelAdapter.stop();
+
+			assertThat(this.metadataStore, instanceOf(HazelcastMetadataStore.class));
+
+			assertNotNull(this.metadataStore.get("ftpSource/ftpSource1.txt"));
+			assertNotNull(this.metadataStore.get("ftpSource/ftpSource2.txt"));
 		}
+
 	}
 
 	// TODO: there is an interference issue between both tests

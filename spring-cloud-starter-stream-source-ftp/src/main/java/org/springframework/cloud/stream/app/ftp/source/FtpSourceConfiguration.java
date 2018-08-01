@@ -33,11 +33,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.file.filters.ChainFileListFilter;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.ftp.dsl.Ftp;
 import org.springframework.integration.ftp.dsl.FtpInboundChannelAdapterSpec;
+import org.springframework.integration.ftp.filters.FtpPersistentAcceptOnceFileListFilter;
 import org.springframework.integration.ftp.filters.FtpRegexPatternFileListFilter;
 import org.springframework.integration.ftp.filters.FtpSimplePatternFileListFilter;
+import org.springframework.integration.metadata.ConcurrentMetadataStore;
+import org.springframework.integration.metadata.MetadataStore;
 import org.springframework.integration.scheduling.PollerMetadata;
 import org.springframework.util.StringUtils;
 
@@ -61,6 +65,9 @@ public class FtpSourceConfiguration {
 	@Autowired
 	private Source source;
 
+	@Autowired
+	private ConcurrentMetadataStore metadataStore;
+
 	@Bean
 	public IntegrationFlow ftpInboundFlow(SessionFactory<FTPFile> ftpSessionFactory, FtpSourceProperties properties,
 			FileConsumerProperties fileConsumerProperties) {
@@ -74,12 +81,18 @@ public class FtpSourceConfiguration {
 				.temporaryFileSuffix(properties.getTmpFileSuffix())
 				.deleteRemoteFiles(properties.isDeleteRemoteFiles());
 
+		ChainFileListFilter<FTPFile> chainFileListFilter = new ChainFileListFilter<>();
+
 		if (StringUtils.hasText(properties.getFilenamePattern())) {
-			messageSourceBuilder.filter(new FtpSimplePatternFileListFilter(properties.getFilenamePattern()));
+			chainFileListFilter.addFilter(new FtpSimplePatternFileListFilter(properties.getFilenamePattern()));
 		}
 		else if (properties.getFilenameRegex() != null) {
-			messageSourceBuilder.filter(new FtpRegexPatternFileListFilter(properties.getFilenameRegex()));
+			chainFileListFilter.addFilter(new FtpRegexPatternFileListFilter(properties.getFilenameRegex()));
 		}
+
+		chainFileListFilter.addFilter(new FtpPersistentAcceptOnceFileListFilter(this.metadataStore, "ftpSource/"));
+
+		messageSourceBuilder.filter(chainFileListFilter);
 
 		IntegrationFlowBuilder flowBuilder =
 				IntegrationFlows.from(messageSourceBuilder, e -> e.poller(this.defaultPoller));

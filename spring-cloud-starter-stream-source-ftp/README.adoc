@@ -13,6 +13,8 @@ When using `--mode=lines`, you can also provide the additional option `--withMar
 If set to `true`, the underlying `FileSplitter` will emit additional _start-of-file_ and _end-of-file_ marker messages before and after the actual data.
 The payload of these 2 additional marker messages is of type `FileSplitter.FileMarker`. The option `withMarkers` defaults to `false` if not explicitly set.
 
+See also https://github.com/spring-cloud-stream-app-starters/core/blob/master/common/app-starters-metadata-store-common/README.adoc[`MetaDataStore`] options for possible shared persistent store configuration for the `FtpPersistentAcceptOnceFileListFilter` used in the FTP Source.
+
 == Input
 
 N/A (Fetches files from an FTP server).
@@ -24,7 +26,7 @@ N/A (Fetches files from an FTP server).
 ==== Headers:
 
 * `Content-Type: application/octet-stream`
-* `file_orginalFile: <java.io.File>`
+* `file_originalFile: <java.io.File>`
 * `file_name: <file name>`
 
 ==== Payload:

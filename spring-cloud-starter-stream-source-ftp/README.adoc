@@ -68,14 +68,9 @@ A `java.io.File` object.
 The **$$ftp$$** $$source$$ has the following options:
 
 //tag::configuration-properties[]
-$$file.consumer.markers-json$$:: $$When 'fileMarkers == true', specify if they should be produced
- as FileSplitter.FileMarker objects or JSON.$$ *($$Boolean$$, default: `$$true$$`)*
-$$file.consumer.mode$$:: $$The FileReadingMode to use for file reading sources.
- Values are 'ref' - The File object,
- 'lines' - a message per line, or
- 'contents' - the contents as bytes.$$ *($$FileReadingMode$$, default: `$$<none>$$`, possible values: `ref`,`lines`,`contents`)*
-$$file.consumer.with-markers$$:: $$Set to true to emit start of file/end of file marker messages before/after the data.
- 	Only valid with FileReadingMode 'lines'.$$ *($$Boolean$$, default: `$$<none>$$`)*
+$$file.consumer.markers-json$$:: $$When 'fileMarkers == true', specify if they should be produced as FileSplitter.FileMarker objects or JSON.$$ *($$Boolean$$, default: `$$true$$`)*
+$$file.consumer.mode$$:: $$The FileReadingMode to use for file reading sources. Values are 'ref' - The File object, 'lines' - a message per line, or 'contents' - the contents as bytes.$$ *($$FileReadingMode$$, default: `$$<none>$$`, possible values: `ref`,`lines`,`contents`)*
+$$file.consumer.with-markers$$:: $$Set to true to emit start of file/end of file marker messages before/after the data. 	Only valid with FileReadingMode 'lines'.$$ *($$Boolean$$, default: `$$<none>$$`)*
 $$ftp.auto-create-local-dir$$:: $$Set to true to create the local directory if it does not exist.$$ *($$Boolean$$, default: `$$true$$`)*
 $$ftp.delete-remote-files$$:: $$Set to true to delete remote files after successful transfer.$$ *($$Boolean$$, default: `$$false$$`)*
 $$ftp.factory.cache-sessions$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*

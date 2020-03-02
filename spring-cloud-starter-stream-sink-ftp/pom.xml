@@ -56,6 +56,11 @@
 					<generatedApps>
 						<ftp-sink/>
 					</generatedApps>
+					<enableContainerImageMetadata>true</enableContainerImageMetadata>
+					<metadataSourceTypeFilters>
+						<filter>org.springframework.cloud.stream.app.ftp.sink.FtpSinkProperties</filter>
+						<filter>org.springframework.cloud.stream.app.ftp.FtpSessionFactoryProperties</filter>
+					</metadataSourceTypeFilters>
 				</configuration>
 			</plugin>
 		</plugins>

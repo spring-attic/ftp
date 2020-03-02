@@ -75,6 +75,13 @@
 					<generatedApps>
 						<ftp-source/>
 					</generatedApps>
+					<enableContainerImageMetadata>true</enableContainerImageMetadata>
+					<metadataSourceTypeFilters>
+						<filter>org.springframework.cloud.stream.app.ftp.source.FtpSourceProperties</filter>
+						<filter>org.springframework.cloud.stream.app.trigger.TriggerPropertiesMaxMessagesDefaultUnlimited</filter>
+						<filter>org.springframework.cloud.stream.app.ftp.FtpSessionFactoryProperties</filter>
+						<filter>org.springframework.cloud.stream.app.file.FileConsumerProperties</filter>
+					</metadataSourceTypeFilters>
 				</configuration>
 			</plugin>
 		</plugins>
